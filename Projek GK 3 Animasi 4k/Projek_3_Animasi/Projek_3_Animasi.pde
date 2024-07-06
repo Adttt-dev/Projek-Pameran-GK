@@ -1,22 +1,25 @@
 import processing.video.*;
 
 PImage[] animasi;
-int animasiX = 750;  // Posisi X awal
-int animasiY = 500;  // Posisi Y awal
+int animasiX = 750;
+int animasiY = 500;
 float animasiSkala = 0.6; 
 int animasiPenghitungFrame = 0; 
 Movie videoLatar;
 boolean videoMulai = false;
-float videoSpeed = 0.5;  // Kecepatan default video
+float videoSpeed = 0.5;
+
+float animasiSpeed = 0.3;
+int animasiCounter = 0;
 
 void setup() {
   size(1400, 900);
   smooth();
-  frameRate(60);  // Set frame rate to 60 FPS
+  frameRate(60);
   
   videoLatar = new Movie(this, "latar.mp4");
   videoLatar.loop();  
-  videoLatar.speed(videoSpeed);  // Set kecepatan awal video
+  videoLatar.speed(videoSpeed);
   
   int jumlahFile = 0;
   while (loadImage("apeni (" + (jumlahFile + 1) + ").gif") != null) {
@@ -48,17 +51,12 @@ void draw() {
     image(animasi[animasiPenghitungFrame], -animasi[animasiPenghitungFrame].width/2, -animasi[animasiPenghitungFrame].height/2); 
     popMatrix();
     
-    if (frameCount % 2 == 0) {
+    animasiCounter++;
+    if (animasiCounter >= animasiSpeed) {
+      animasiCounter = 0;
       animasiPenghitungFrame = (animasiPenghitungFrame + 1) % animasi.length;
     }
   }
-  
-  fill(255);
-  text("Klik di mana saja untuk memindahkan karakter", 10, 20);
-  text("Posisi: (" + animasiX + ", " + animasiY + ")", 10, 40);
-  text("FPS: " + frameRate, 10, 60);
-  text("Video Speed: " + videoSpeed + "x", 10, 80);  // Tampilkan kecepatan video
-  text("Tekan + untuk mempercepat, - untuk memperlambat video", 10, 100);
 }
 
 void mousePressed() {
@@ -71,8 +69,12 @@ void keyPressed() {
     videoSpeed += 1;
     videoLatar.speed(videoSpeed);
   } else if (key == '-' || key == '_') {
-    videoSpeed = max(1, videoSpeed - 1);  // Pastikan kecepatan tidak kurang dari 1
+    videoSpeed = max(1, videoSpeed - 1);
     videoLatar.speed(videoSpeed);
+  } else if (key == 'f' || key == 'F') {
+    animasiSpeed = max(1, animasiSpeed - 1);
+  } else if (key == 's' || key == 'S') {
+    animasiSpeed++;
   }
 }
 
